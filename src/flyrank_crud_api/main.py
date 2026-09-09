@@ -36,6 +36,25 @@ def create_task(task: dict):
     my_tasks.append(new_task)
     return new_task, 201    
 
+
+@app.put("/tasks/{task_id}")
+def update_task(task_id: int, task: dict):
+    for t in my_tasks:
+        if t["id"] == task_id:
+            t["title"] = task.get("title", t["title"])
+            t["done"] = task.get("done", t["done"])
+            return t
+    return {f"Task {task_id} not found"}, 404
+
+
+@app.delete("/tasks/{task_id}")
+def delete_task(task_id: int):
+    for t in my_tasks:
+        if t["id"] == task_id:
+            my_tasks.remove(t)
+            return {"message": f"Task {task_id} deleted"}
+    return {f"Task {task_id} not found"}, 404
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
