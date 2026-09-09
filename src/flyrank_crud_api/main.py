@@ -27,6 +27,15 @@ def get_task(task_id: int):
     return {f"Task {task_id} not found"},404
 
 
+
+@app.post("/tasks")
+def create_task(task: dict):
+    if not  task["title"] or  not  task["title"].strip():
+        return {"error": "Task title is required"}, 400
+    new_task = {"id": len(my_tasks) + 1, "title": task["title"], "done": False}
+    my_tasks.append(new_task)
+    return new_task, 201    
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
