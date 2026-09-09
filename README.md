@@ -1,20 +1,71 @@
-## my  crud app
+# FlyRank CRUD API
 
-# use  uv  to install the  dependaciers and  run it  
-`uv  add`
-`uv  run main.py`
+A small task-management API built with [FastAPI](https://fastapi.tiangolo.com/). Data is stored in memory, so it resets whenever the application restarts.
 
+## Requirements
 
-* curl cmd *
-```bash curl -i -X POST http://localhost:8000/tasks -H "Content-Type: application/json" -d '{"title":"Buy milk"}'
-HTTP/1.1 200 OK
-date: Wed, 09 Sep 2026 20:12:48 GMT
-server: uvicorn
-content-length: 46
-content-type: application/json
+- Python 3.14 or newer
+- [uv](https://docs.astral.sh/uv/)
 
-[{"id":4,"title":"Buy milk","done":false},201]`
+## Setup
 
+Install the project dependencies:
 
-![alt text](image.png)
-![alt text](image-1.png)
+```bash
+uv sync
+```
+
+Start the development server:
+
+```bash
+uv run uvicorn flyrank_crud_api.main:app --reload
+```
+
+The API is available at <http://localhost:8000>. Interactive API documentation is available at <http://localhost:8000/docs>.
+
+## Endpoints
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `GET` | `/` | Return API information |
+| `GET` | `/health` | Check API health |
+| `GET` | `/tasks` | List all tasks |
+| `GET` | `/tasks/{task_id}` | Get one task |
+| `POST` | `/tasks` | Create a task |
+| `PUT` | `/tasks/{task_id}` | Update a task |
+| `DELETE` | `/tasks/{task_id}` | Delete a task |
+
+## Examples
+
+List tasks:
+
+```bash
+curl http://localhost:8000/tasks
+```
+
+Create a task:
+
+```bash
+curl -X POST http://localhost:8000/tasks \
+	-H "Content-Type: application/json" \
+	-d '{"title":"Buy milk"}'
+```
+
+Update a task:
+
+```bash
+curl -X PUT http://localhost:8000/tasks/1 \
+	-H "Content-Type: application/json" \
+	-d '{"title":"Buy oat milk","done":true}'
+```
+
+Delete a task:
+
+```bash
+curl -X DELETE http://localhost:8000/tasks/1
+```
+
+## Screenshots
+
+![FastAPI documentation](image.png)
+![API response example](image-1.png)
