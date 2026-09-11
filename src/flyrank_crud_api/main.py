@@ -1,13 +1,10 @@
 from fastapi import  FastAPI
 import  uvicorn
+import  sqlite3
 
 app=FastAPI()
 
-my_tasks = [
-    {"id": 1, "title": "Task 1", "done": True},
-    {"id": 2, "title": "Task 2", "done": False},
-    {"id": 3, "title": "Task 3", "done": False},
-]
+db=sqlite3.connect("tasks.db", check_same_thread=False)
 
 
 @app.get("/")
@@ -17,14 +14,20 @@ def hello():
 
 @app.get("/tasks")
 def get_tasks():
-    return my_tasks
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM task")
+    rows = cursor.fetchall()
+    return rows
 
 @app.get("/tasks/{task_id}")
 def get_task(task_id: int):
-    for task in my_tasks:
-        if task["id"] == task_id:
-            return task
-    return {f"Task {task_id} not found"},404
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM task WHERE id=?", (task_id,))
+    row = cursor.fetchone()
+    if row:
+        return row
+    else:
+        return {"error": f"Task {task_id} not found"}, 404
 
 
 
