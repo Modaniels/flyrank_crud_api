@@ -53,12 +53,12 @@ def update_task(task_id: int, task: dict):
 
 @app.delete("/tasks/{task_id}")
 def delete_task(task_id: int):
-    for t in my_tasks:
-        if t["id"] == task_id:
-            my_tasks.remove(t)
-            return {"message": f"Task {task_id} deleted"}
-    return {f"Task {task_id} not found"}, 404
-
+    cursor=db.cursor()
+    cursor.execute("DELETE FROM task WHERE id=?", (task_id,))
+    db.commit()
+    if cursor.rowcount == 0:
+         return {"error": f"Task {task_id} not found"}, 404
+    return {"message": f"Task {task_id} deleted successfully"}
 @app.get("/health")
 def health():
     return {"status": "ok"}
