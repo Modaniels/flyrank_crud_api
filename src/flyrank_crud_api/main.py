@@ -43,12 +43,12 @@ def create_task(task: dict):
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: int, task: dict):
-    for t in my_tasks:
-        if t["id"] == task_id:
-            t["title"] = task.get("title", t["title"])
-            t["done"] = task.get("done", t["done"])
-            return t
-    return {f"Task {task_id} not found"}, 404
+   cursor=db.cursor()
+   cursor.execute("UPDATE task SET title=?, done=? WHERE id=?", (task["title"], task.get("done", False), task_id))
+   db.commit()
+   if cursor.rowcount == 0:
+       return {"error": f"Task {task_id} not found"}, 404
+   return {"id": task_id, "title": task["title"], "done": task.get("done", False)}
 
 
 @app.delete("/tasks/{task_id}")
