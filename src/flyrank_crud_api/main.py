@@ -33,11 +33,12 @@ def get_task(task_id: int):
 
 @app.post("/tasks")
 def create_task(task: dict):
-    if not  task["title"] or  not  task["title"].strip():
-        return {"error": "Task title is required"}, 400
-    new_task = {"id": len(my_tasks) + 1, "title": task["title"], "done": False}
-    my_tasks.append(new_task)
-    return new_task, 201    
+   cursor=db.cursor()
+   cursor.execute("INSERT INTO task (title, done) VALUES (?, ?)", (task["title"], task.get("done", False)))
+   db.commit()
+   task_id = cursor.lastrowid
+   return {"id": task_id, "title": task["title"], "done": task.get("done", False)}
+   
 
 
 @app.put("/tasks/{task_id}")
